@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <a href="{% url 'users_list' %}" class="btn btn-outline-secondary mb-4 rounded-pill px-4">
+        <i class="fas fa-arrow-left me-2"></i> Назад к поиску
+    </a>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="glass-card overflow-hidden p-0">
+                <div class="row g-0">
+
+                    <!-- ФОТО (Левая часть) -->
+                    <div class="col-md-5 position-relative" style="min-height: 500px;">
+                        {% if user_obj.avatar %}
+                            <img src="{{ user_obj.avatar.url }}" class="w-100 h-100" style="object-fit: cover; position: absolute;">
+                        {% else %}
+                            <div class="w-100 h-100 bg-secondary d-flex align-items-center justify-content-center">
+                                <i class="fas fa-user fa-5x text-white-50"></i>
+                            </div>
+                        {% endif %}
+
+                        <!-- Градиент -->
+                        <div class="position-absolute bottom-0 start-0 w-100" style="height: 40%; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);"></div>
+
+                        <!-- VIP Бейдж -->
+                        {% if user_obj.subscription == 'vip' %}
+                            <div class="position-absolute top-0 start-0 m-4 badge bg-warning text-dark shadow-lg p-2 rounded-pill pe-3">
+                                <i class="fas fa-crown me-1"></i> VIP Persona
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- ИНФОРМАЦИЯ (Правая часть) -->
+                    <div class="col-md-7 d-flex flex-column">
+                        <div class="p-4 p-lg-5 flex-grow-1">
+                            <!-- Заголовок: Имя и Возраст -->
+                            <div class="d-flex justify-content-between align-items-start mb-4">
+                                <div>
+                                    <h1 class="fw-bold mb-1 display-5">{{ user_obj.username }}</h1>
+                                    <p class="text-muted h5">
+                                        <!-- ВОТ ЗДЕСЬ БЫЛА ОШИБКА, Я ИСПРАВИЛ -->
+                                        {% if user_obj.age %}
+                                            <span class="badge bg-light text-dark border me-2">{{ user_obj.age }} лет</span>
+                                        {% endif %}
+                                        
+                                        <i class="fas fa-map-marker-alt text-danger me-1"></i> {{ user_obj.get_city_display }}
+                                    </p>
+                                </div>
+                                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle px-3 py-2 rounded-pill">
+                                    {{ user_obj.get_goal_display }}
+                                </span>
+                            </div>
+
+                            <!-- Кнопки реакций -->
+                            <div class="glass-panel p-3 mb-4 text-center">
+                                <p class="small text-muted mb-2 fw-bold text-uppercase">Выразить симпатию</p>
+                                <div class="btn-group w-100 gap-2">
+                                    <a href="{% url 'send_reaction' user_obj.pk 'star' %}" class="btn btn-outline-warning rounded-3 py-2 border-2">
+                                        <i class="fas fa-star fa-lg mb-1 d-block"></i> <span class="small fw-bold">Избранное</span>
+                                    </a>
+                                    <a href="{% url 'send_reaction' user_obj.pk 'check' %}" class="btn btn-outline-success rounded-3 py-2 border-2">
+                                        <i class="fas fa-check-circle fa-lg mb-1 d-block"></i> <span class="small fw-bold">Встреча</span>
+                                    </a>
+                                    <a href="{% url 'send_reaction' user_obj.pk 'like' %}" class="btn btn-outline-danger rounded-3 py-2 border-2">
+                                        <i class="fas fa-heart fa-lg mb-1 d-block"></i> <span class="small fw-bold">Лайк</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- О себе -->
+                            <div class="mb-4">
+                                <h5 class="fw-bold text-dark border-bottom pb-2 mb-3">О себе</h5>
+                                <p class="text-muted" style="line-height: 1.8;">
+                                    {% if user_obj.about %}
+                                        {{ user_obj.about }}
+                                    {% else %}
+                                        Пользователь пока не рассказал о себе, но вы можете спросить его лично!
+                                    {% endif %}
+                                </p>
+                            </div>
+
+                            <!-- Вопросы (Айсбрейкеры) -->
+                            {% if user_obj.question1 or user_obj.question2 or user_obj.question3 %}
+                            <div class="bg-light p-4 rounded-3 border">
+                                <h5 class="fw-bold mb-3 text-primary"><i class="fas fa-comments me-2"></i>Хочу спросить:</h5>
+                                <ul class="list-unstyled mb-0">
+                                    {% if user_obj.question1 %}
+                                    <li class="mb-3">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <span class="fst-italic text-dark">"{{ user_obj.question1 }}"</span>
+                                            <a href="{% url 'answer_question' user_obj.pk 1 %}" class="btn btn-sm btn-outline-primary rounded-pill ms-2">Ответить</a>
+                                        </div>
+                                    </li>
+                                    {% endif %}
+                                    
+                                    {% if user_obj.question2 %}
+                                    <li class="mb-3">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <span class="fst-italic text-dark">"{{ user_obj.question2 }}"</span>
+                                            <a href="{% url 'answer_question' user_obj.pk 2 %}" class="btn btn-sm btn-outline-primary rounded-pill ms-2">Ответить</a>
+                                        </div>
+                                    </li>
+                                    {% endif %}
+                                    
+                                    {% if user_obj.question3 %}
+                                    <li class="mb-3">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <span class="fst-italic text-dark">"{{ user_obj.question3 }}"</span>
+                                            <a href="{% url 'answer_question' user_obj.pk 3 %}" class="btn btn-sm btn-outline-primary rounded-pill ms-2">Ответить</a>
+                                        </div>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                            {% endif %}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

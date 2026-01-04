@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Чаты LoveConnect{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <h2 class="display-4 fw-bold mb-3">💬 Тематические чаты</h2>
+            <p class="lead text-muted">Найди компанию по интересам и начинай общаться!</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        {% for code, name in rooms %}
+        <div class="col-md-6 col-lg-4">
+            <div class="glass-card h-100 text-center p-4">
+                <div class="display-1 mb-3">
+                    {% if code == 'general' %}📢
+                    {% elif code == 'tlv' %}🏖️
+                    {% elif code == 'relationships' %}❤️
+                    {% elif code == 'hobby' %}🎨
+                    {% elif code == 'travel' %}🚗
+                    {% endif %}
+                </div>
+                <h4 class="fw-bold mb-3">{{ name }}</h4>
+                <a href="{% url 'room_detail' code %}" class="btn btn-premium w-100">
+                    Войти в чат
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Регистрация на LoveConnect</title>
+</head>
+<body>
+    <div style="text-align: center; margin-top: 50px;">
+        <h2>Регистрация нового пользователя</h2>
+        
+        <form method="post" enctype="multipart/form-data">
+            <!-- Защита от хакеров -->
+            {% csrf_token %}
+            
+            <!-- Сама форма -->
+            {{ form.as_p }}
+            
+            <button type="submit" style="padding: 10px 20px; background-color: pink; border: none; cursor: pointer;">
+                Зарегистрироваться
+            </button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="text-center mb-4">Найти пару ❤️</h2>
+
+<!-- ФИЛЬТРЫ -->
+<div class="glass-panel p-4 mb-5">
+    <form method="get" class="row g-3 align-items-end">
+        <!-- Город -->
+        <div class="col-md-3">
+            <label class="form-label small text-muted fw-bold">Город</label>
+            <select name="city" class="form-select border-0 bg-light">
+                <option value="">Все года</option>
+                {% for code, name in CITY_CHOICES %}
+                <option value="{{ code }}" {% if request.GET.city == code %}selected{% endif %}>{{ name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Пол -->
+        <div class="col-md-3">
+            <label class="form-label small text-muted fw-bold">Кого ищем</label>
+            <select name="gender" class="form-select border-0 bg-light">
+                <option value="">Любой</option>
+                {% for code, name in GENDER_CHOICES %}
+                <option value="{{ code }}" {% if request.GET.gender == code %}selected{% endif %}>{{ name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Возраст -->
+        <div class="col-md-3">
+            <label class="form-label small text-muted fw-bold">Возраст</label>
+            <div class="input-group">
+                <input type="number" name="min_age" class="form-control border-0 bg-light" placeholder="От"
+                    value="{{ request.GET.min_age }}">
+                <span class="input-group-text border-0 bg-white">-</span>
+                <input type="number" name="max_age" class="form-control border-0 bg-light" placeholder="До"
+                    value="{{ request.GET.max_age }}">
+            </div>
+        </div>
+
+        <!-- Кнопка -->
+        <div class="col-md-3">
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-premium">Применить</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<!-- СПИСОК АНКЕТ -->
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    {% for user_obj in users %}
+    <div class="col">
+        <div class="glass-card h-100 d-flex flex-column text-center p-0 overflow-hidden text-decoration-none text-dark position-relative"
+            style="border: 1px solid rgba(255,255,255,0.6);">
+
+            <!-- Статус (Город) -->
+            <div class="position-absolute top-0 end-0 m-3 badge bg-white text-dark shadow-sm bg-opacity-75 backdrop-blur"
+                style="z-index: 2;">
+                <i class="fas fa-map-marker-alt text-danger me-1"></i> {{ user_obj.get_city_display }}
+            </div>
+
+            <!-- Фото -->
+            <div style="height: 280px; overflow: hidden; background: #eee; position: relative;">
+                {% if user_obj.avatar %}
+                <img src="{{ user_obj.avatar.url }}" alt="{{ user_obj.username }}" class="w-100 h-100"
+                    style="object-fit: cover; transition: transform 0.5s;">
+                {% else %}
+                <div class="d-flex align-items-center justify-content-center h-100 bg-secondary bg-opacity-10">
+                    <i class="fas fa-user fa-4x text-muted"></i>
+                </div>
+                {% endif %}
+
+                <!-- Градиент снизу фото -->
+                <div class="position-absolute bottom-0 start-0 w-100"
+                    style="height: 50%; background: linear-gradient(to top, rgba(0,0,0,0.4), transparent);"></div>
+
+                <div class="position-absolute bottom-0 start-0 w-100 p-3 text-white text-start">
+                    <h4 class="fw-bold mb-0 text-shadow">{{ user_obj.username }}, {{ user_obj.age|default:"?" }}</h4>
+                </div>
+            </div>
+
+            <!-- Инфо -->
+            <div class="p-4 d-flex flex-column flex-grow-1 text-start">
+                <div class="mb-3">
+                    <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2">
+                        {{ user_obj.get_goal_display }}
+                    </span>
+                </div>
+
+                {% if user_obj.about %}
+                <p class="text-muted small mb-4 flex-grow-1"
+                    style="display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.6;">
+                    {{ user_obj.about }}
+                </p>
+                {% else %}
+                <p class="text-muted small mb-4 flex-grow-1 fst-italic">
+                    Пользователь пока ничего не рассказал о себе...
+                </p>
+                {% endif %}
+
+                <a href="{% url 'user_detail' user_obj.pk %}"
+                    class="btn btn-outline-premium btn-sm w-100 fw-bold stretched-link mt-auto">
+                    Посмотреть анкету
+                </a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center py-5">
+        <div class="glass-panel p-5 mx-auto" style="max-width: 500px;">
+            <div class="display-1 mb-3">🕵️‍♀️</div>
+            <h3>Никого не найдено</h3>
+            <p class="text-muted">Попробуйте изменить параметры поиска или загляните позже.</p>
+            <a href="{% url 'users_list' %}" class="btn btn-premium mt-3">Сбросить фильтры</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

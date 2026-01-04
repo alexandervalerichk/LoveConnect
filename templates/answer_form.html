@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5 d-flex align-items-center justify-content-center" style="min-height: 80vh;">
+    <div class="glass-card w-100 p-4 p-md-5" style="max-width: 600px;">
+        <h2 class="text-center mb-4">Ответ для <span class="text-primary">{{ receiver.username }}</span></h2>
+
+        <div class="bg-light p-4 rounded-3 mb-4 text-center border">
+            <small class="text-muted text-uppercase fw-bold ls-1">Вопрос</small>
+            <p class="fs-4 fst-italic mb-0 mt-2">"{{ question_text }}"</p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-4">
+                <label for="id_answer_text" class="form-label fw-bold">Ваш ответ:</label>
+                <textarea name="answer_text" id="id_answer_text" rows="5" class="form-control border-0 shadow-sm p-3"
+                    placeholder="Напишите что-то оригинальное..." required style="resize: none;"></textarea>
+            </div>
+
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-premium btn-lg">
+                    Отправить ответ 💌
+                </button>
+                <a href="{% url 'user_detail' receiver.pk %}" class="btn btn-light text-muted">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="glass-panel text-center p-4 mb-4 mx-auto" style="max-width: 600px;">
+        <h2 class="mb-0 text-primary fw-bold">Мои ответы 💌</h2>
+    </div>
+
+    {% if answers %}
+    <div class="d-flex flex-column gap-3 mx-auto" style="max-width: 800px;">
+        {% for answer in answers %}
+        <div class="glass-card border-0 p-4 position-relative overflow-hidden">
+            <!-- Индикатор прочтения (полоска) -->
+            <div class="position-absolute top-0 start-0 bottom-0"
+                style="width: 5px; background: {% if answer.is_read %}#cbd5e1{% else %}var(--primary){% endif %};">
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-3 ps-2">
+                <div>
+                    <a href="{% url 'user_detail' answer.responder.pk %}"
+                        class="fw-bold text-decoration-none text-dark fs-5">
+                        {{ answer.responder.username }}
+                    </a>
+                    <span class="text-muted small ms-2">ответил на вопрос:</span>
+                </div>
+                <small class="text-muted">{{ answer.created_at|date:"d M H:i" }}</small>
+            </div>
+
+            <div class="ps-2 mb-3 fst-italic text-muted border-start border-3 ms-1 ps-3">
+                "{{ answer.question_text }}"
+            </div>
+
+            <div class="bg-light bg-opacity-50 p-3 rounded-3 ps-3 ms-1">
+                {{ answer.answer_text }}
+            </div>
+
+            {% if not answer.is_read %}
+            <span class="position-absolute top-0 end-0 m-2 badge bg-primary rounded-pill small">Новое</span>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <div class="glass-panel d-inline-block p-5">
+            <div class="display-1 mb-3">📭</div>
+            <p class="text-muted mb-0">Вам пока никто не написал.<br>Заполните больше вопросов в профиле! 😉</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

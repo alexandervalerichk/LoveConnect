@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row g-4">
+        <!-- Левая колонка: Профиль (Превью) -->
+        <div class="col-lg-4">
+            <div class="glass-card text-center p-5 h-100 sticky-top" style="top: 100px; z-index: 1;">
+                <div class="position-relative d-inline-block mb-4">
+                    {% if user.avatar %}
+                    <img src="{{ user.avatar.url }}" class="rounded-circle shadow-lg border border-3 border-white"
+                        style="width: 150px; height: 150px; object-fit: cover;">
+                    {% else %}
+                    <div class="rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto shadow-inner"
+                        style="width: 150px; height: 150px;">
+                        <i class="fas fa-user fa-4x text-muted"></i>
+                    </div>
+                    {% endif %}
+                    <span
+                        class="position-absolute bottom-0 end-0 p-2 bg-success border border-white rounded-circle"></span>
+                </div>
+
+                <h3 class="fw-bold mb-1">{{ user.username }}</h3>
+                <p class="text-muted mb-4">
+                    {% if user.city %}{{ user.get_city_display }} | {% endif %}
+                    {{ user.age|default:"Возраст не указан" }}
+                </p>
+
+                <div class="d-grid gap-2">
+                    <a href="{% url 'users_list' %}" class="btn btn-outline-premium rounded-pill">
+                        <i class="fas fa-search me-2"></i> Искать пару
+                    </a>
+                    <a href="{% url 'my_answers' %}" class="btn btn-light rounded-pill">
+                        <i class="fas fa-envelope me-2"></i> Сообщения
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Правая колонка: Форма Редактирования -->
+        <div class="col-lg-8">
+            <div class="glass-card p-4 p-md-5">
+                <h4 class="mb-4 fw-bold text-primary border-bottom pb-3">✏️ Редактирование профиля</h4>
+
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        Пожалуйста, исправьте ошибки в форме.
+                    </div>
+                    {% endif %}
+
+                    <!-- Секция 1: Основное -->
+                    <h5 class="text-muted mb-3"><i class="fas fa-id-card me-2"></i>Основная информация</h5>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted">Город</label>
+                            {{ form.city }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted">Дата рождения</label>
+                            {{ form.birth_date }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted">Кто я</label>
+                            {{ form.gender }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted">Кого ищу</label>
+                            {{ form.looking_for_gender }}
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label small fw-bold text-muted">Цель знакомства</label>
+                            {{ form.goal }}
+                        </div>
+                    </div>
+
+                    <!-- Секция 2: Внешность -->
+                    <h5 class="text-muted mb-3 mt-5"><i class="fas fa-ruler-combined me-2"></i>Внешность</h5>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted">Рост (см)</label>
+                            {{ form.height }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted">Вес (кг)</label>
+                            {{ form.weight }}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-muted">Обновить фото</label>
+                            {{ form.avatar }}
+                        </div>
+                    </div>
+
+                    <!-- Секция 3: О себе -->
+                    <h5 class="text-muted mb-3 mt-5"><i class="fas fa-pen-fancy me-2"></i>О себе</h5>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Расскажите о себе</label>
+                        {{ form.about }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Интересы (через запятую)</label>
+                        {{ form.interests }}
+                    </div>
+
+                    <!-- Секция 4: 3 Вопроса -->
+                    <div class="p-4 rounded-3 mt-5"
+                        style="background: rgba(255, 75, 110, 0.05); border: 1px dashed var(--primary);">
+                        <h5 class="text-primary mb-3"><i class="fas fa-question-circle me-2"></i>Мои 3 вопроса</h5>
+                        <p class="small text-muted mb-3">
+                            Задайте 3 вопроса, которые помогут начать разговор. Пользователи смогут ответить на них
+                            прямо в вашей анкете!
+                        </p>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Вопрос №1</label>
+                            {{ form.question1 }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Вопрос №2</label>
+                            {{ form.question2 }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Вопрос №3</label>
+                            {{ form.question3 }}
+                        </div>
+                    </div>
+
+                    <div class="mt-5 pt-3 border-top position-sticky bottom-0 bg-white pb-2" style="z-index: 10;">
+                        <button type="submit" class="btn btn-premium btn-lg rounded-pill px-5 w-100 shadow-lg">
+                            <i class="fas fa-save me-2"></i> Сохранить профиль
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
